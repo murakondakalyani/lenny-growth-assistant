@@ -2,6 +2,11 @@
 
 > Evidence-grounded product and growth copilot powered by Lenny's Podcast transcripts.
 
+<img width="1918" height="967" alt="image" src="https://github.com/user-attachments/assets/e33c3f33-6289-427f-803d-bb28e610a8b3" />
+
+<img width="1920" height="970" alt="image" src="https://github.com/user-attachments/assets/488501bb-fda0-47d3-89a8-d29195ed1344" />
+
+
 ## 1. What this is
 
 The Lenny Growth Assistant is a full-stack AI product that turns Lenny's Podcast knowledge into three practical workflows:
@@ -235,6 +240,15 @@ For Docker backend containers, use:
 ```env
 OLLAMA_BASE_URL=http://host.docker.internal:11434
 ```
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/7775cf7a-23da-44d8-86e4-c329b6d0173c" />
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/a6307075-9d2c-43aa-8cb8-4b251a0122ab" />
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/9f19f665-de71-4012-9d6d-02d0a5e28f3f" />
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/c022a81a-5564-4d76-aa57-90a59c3fcd4f" />
+
+
 
 ## 8. Run locally
 
