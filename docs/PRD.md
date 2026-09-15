@@ -1,361 +1,303 @@
-# The Lenny Growth Assistant
-## Product Requirements Document
+# PRD — The Lenny Growth Assistant
 
-**Version:** 1.0  
-**Status:** Take-Home Assessment  
-**Product:** The Lenny Growth Assistant  
-**Role:** Forward Deployed Engineer  
+## 1. Discovery brief
 
----
+### User
 
-# 1. Executive Summary
+Primary user: a product manager, growth lead, founder, or product/growth team member who wants to use Lenny's Podcast knowledge to make a concrete decision or produce reusable work.
 
-The Lenny Growth Assistant is an AI-powered internal knowledge assistant designed to help product managers, founders, and growth practitioners turn Lenny's Podcast transcript knowledge into grounded answers, actionable decisions, reusable written content, and rendered artifacts.
+### Job to be done
 
-The product combines conversational retrieval, agentic routing, source-grounded generation, structured content skills, local LLM inference through Ollama, optional cloud inference, PostgreSQL persistence, and an isolated artifact viewer.
+> When I face a product or growth decision, help me quickly find relevant expert evidence from Lenny's content, understand the implications, and turn that evidence into an actionable decision, essay, or artifact.
 
-The central product principle is:
+### Pain removed
 
-> Move users from question → evidence → decision → deliverable without requiring them to understand prompts, models, retrieval systems, or infrastructure.
+Today the user must:
 
-The assistant is intentionally designed as a forward-deployed internal tool rather than a generic chatbot.
+- remember which episode discussed the topic
+- search transcripts manually
+- distinguish relevant evidence from unrelated content
+- synthesize multiple perspectives
+- turn the answer into a reusable document
+- manage formatting and rendering separately
 
----
+The assistant compresses those steps into one workflow.
 
-# 2. Forward Deployment Discovery Brief
+## 2. Success metrics
 
-## 2.1 User and Problem
+### Primary product metric
 
-### Primary users
+**Evidence-grounded task completion rate**
 
-The primary users are:
+Percentage of evaluation tasks where the assistant:
 
-- Product managers
-- Growth practitioners
-- Startup founders
-- Product leaders
-- Internal strategy teams
+1. answers the requested question,
+2. returns at least one relevant source when evidence exists,
+3. preserves context for a follow-up,
+4. and produces a useful next action.
 
-### User job
+Target for the take-home demo: **>= 80% across a manually defined evaluation set.**
 
-Users frequently face product and growth questions such as:
+### Operational metrics
 
-- How should we prioritize opportunities?
-- How should we approach product-market fit?
-- How should we structure growth experiments?
-- How should product teams make difficult prioritization decisions?
-- How can an expert product insight be turned into something reusable?
+- `/health` returns healthy when dependencies are available.
+- Retrieval latency is visible in diagnostic output.
+- Artifact sanitizer test passes.
+- Local Ollama generation completes without a cloud dependency.
+- A fresh evaluator can run the documented setup.
 
-The underlying job is:
+## 3. Assumptions
 
-> When facing a product or growth decision, I want to quickly find relevant expert knowledge and convert it into an actionable next step.
+1. The primary corpus is Lenny's Podcast transcript material.
+2. Users value traceability over a purely conversational answer.
+3. The local demo can use a small Ollama model.
+4. PostgreSQL is already acceptable as the system of record.
+5. Generated HTML is untrusted.
+6. Sessions are anonymous in the take-home scope; persistent authentication is intentionally deferred.
+7. The evaluator primarily needs a local, reproducible deployment rather than production cloud infrastructure.
+8. The model may synthesize across multiple transcript chunks but must not invent unsupported facts.
 
-### Problem
+## 4. Scope
 
-Expert knowledge is difficult to use efficiently when it is distributed across long-form podcast transcripts.
+### Included
 
-Users may need to:
-
-1. Search multiple transcripts.
-2. Read large sections of conversations.
-3. Identify relevant evidence.
-4. Compare perspectives.
-5. Translate insights into their own context.
-6. Create reusable written material.
-
-This creates friction between **knowledge discovery** and **knowledge application**.
-
-The assistant removes that friction by providing a single interface for:
-
-**Question → Evidence → Synthesis → Action**
-
----
-
-# 3. Product Vision
-
-The product vision is to create a trustworthy product-growth intelligence layer over Lenny's Podcast knowledge.
-
-Rather than positioning the system as an all-knowing AI assistant, the product emphasizes:
-
-- Grounding
-- Evidence
-- Transparency
-- Actionability
-- Reusability
-- Operational reliability
-
-The assistant should make it easy for a user to understand not only **what the answer is**, but also **where the answer came from**.
-
----
-
-# 4. Product Principles
-
-## 4.1 Evidence before confidence
-
-The assistant should prefer an honest limitation over an unsupported answer.
-
-## 4.2 Separate source knowledge from synthesis
-
-The system should distinguish between:
-
-- What the source material supports.
-- What the assistant synthesizes from those sources.
-
-## 4.3 Make complex AI behavior understandable
-
-Users should not need to understand:
-
-- embeddings
-- retrieval
-- agents
-- model providers
-- prompts
-
-The interface should expose useful outcomes instead.
-
-## 4.4 Local-first demonstration
-
-Ollama is the default demonstration provider because local inference is a mandatory assessment requirement.
-
-## 4.5 Design for handoff
-
-The system should be understandable and operable by another engineer without requiring the original developer.
-
----
-
-# 5. Success Metrics
-
-## 5.1 Grounded Answer Acceptance Rate
-
-Percentage of evaluation questions for which the answer is judged:
-
-1. Relevant
-2. Useful
-3. Supported by retrieved transcript evidence
-
-### Target
-
-≥ 85% on the curated evaluation set.
-
----
-
-## 5.2 Evidence Hit Rate
-
-Percentage of evaluation queries where at least one relevant source passage appears in the top-k retrieval results.
-
-### Target
-
-≥ 90% on the curated retrieval evaluation set.
-
----
-
-## 5.3 Citation Coverage
-
-Percentage of source-dependent factual claims that contain identifiable supporting source references.
-
-### Target
-
-≥ 95%.
-
----
-
-## 5.4 Fresh Installation Success
-
-Percentage of clean environments where a new evaluator can:
-
-1. Clone the repository.
-2. Configure environment variables.
-3. Start the application.
-4. Open the UI.
-5. Run a grounded query.
-
-### Target
-
-100% following the documented setup path.
-
----
-
-## 5.5 Operational Visibility
-
-Model, retrieval, database, and artifact failures should produce actionable logs and user-facing errors rather than silent failures.
-
----
-
-# 6. Assumptions
-
-Because the original client brief does not specify every product detail, the following assumptions are made:
-
-1. The primary use case is an internal product/growth knowledge assistant.
-2. Lenny's Podcast transcripts are the authoritative knowledge source for claims attributed to the podcast.
-3. The assistant should not invent opinions and attribute them to Lenny or podcast guests.
-4. The local Ollama model is the default demo model.
-5. A cloud model is an optional higher-quality inference path.
-6. Users may ask questions that are not sufficiently supported by the transcript repository.
-7. Generated HTML must be treated as untrusted content.
-8. Authentication and enterprise identity management are outside the take-home scope.
-9. The application is designed primarily for local evaluation and small-team internal use rather than internet-scale production traffic.
-10. Artifacts are persisted for the associated session so users can revisit generated work.
-
----
-
-# 7. Scope
-
-## 7.1 In Scope
-
-### Core assistant
-
-- Conversational chat
-- Independent sessions
-- Follow-up questions
+- FastAPI backend
 - PostgreSQL persistence
-- Transcript retrieval
-- Grounded answers
-- Source citations
-- Abstention when evidence is insufficient
+- pgvector retrieval
+- transcript ingestion
+- hybrid retrieval
+- independent sessions
+- conversational follow-ups
+- Ollama local model
+- Anthropic provider/configuration
+- Claude Agent SDK retrieval-tool integration
+- dedicated Ship30 skill
+- artifact generation
+- HTML sanitization
+- sandboxed artifact viewer
+- health/system-status endpoints
+- automated tests
+- operational documentation
 
-### AI infrastructure
+### Intentionally excluded
 
-- Local Ollama provider
-- Cloud LLM provider
-- Provider abstraction
-- Model switching
-- Agent routing
+- full user authentication
+- billing
+- multi-tenant permissions
+- production cloud deployment
+- real-time streaming tokens
+- collaborative editing
+- external artifact publishing
 
-### Content generation
+These are intentionally excluded to preserve a reliable end-to-end core within the take-home time constraint.
 
-- Ship 30 for 30 skill
-- Approximately 1,250-word essays
-- Grounded content generation
-- Structured decision frameworks
+## 5. Product principles
+
+### Trust before cleverness
+
+Every answer should be anchored in retrieved evidence where available.
+
+### Make the evidence visible
+
+Source metadata should be accessible without asking the user to inspect prompts.
+
+### Optimize for decisions
+
+The assistant should help users decide what to do next, not merely summarize transcripts.
+
+### Keep modes explicit
+
+ASK, CREATE, and BUILD have different output contracts.
+
+### Fail honestly
+
+When evidence is insufficient, the system should say so instead of inventing an answer.
+
+## 6. User flows
+
+### Flow A — Ask
+
+```text
+Open app
+  ↓
+Create/select session
+  ↓
+Ask question
+  ↓
+Retrieve evidence
+  ↓
+Generate grounded response
+  ↓
+Show Evidence Trail
+  ↓
+Ask follow-up
+  ↓
+Continue same session
+```
+
+### Flow B — Ship 30
+
+```text
+Question/topic
+  ↓
+Retrieve transcript evidence
+  ↓
+Ship30Skill
+  ↓
+Hook + narrative + skimmable structure
+  ↓
+~1,250-word essay
+  ↓
+Rendered artifact
+```
+
+### Flow C — Decision Canvas
+
+```text
+Conversation/context
+  ↓
+Artifact request
+  ↓
+Retrieve evidence
+  ↓
+Generate HTML/CSS
+  ↓
+Sanitize
+  ↓
+Sandboxed iframe
+  ↓
+Artifact Viewer beside chat
+```
+
+## 7. Acceptance criteria
+
+### Conversational assistant
+
+- User can create a new session.
+- Sessions have independent context.
+- User messages are persisted.
+- Assistant messages are persisted.
+- Follow-up questions use prior conversation context.
+- Retrieved evidence is visible.
+- Unsupported questions are not answered with fabricated transcript claims.
+
+### Model configuration
+
+- Provider/model are configurable.
+- Ollama is supported.
+- Ollama is used for the local demo.
+- A cloud provider is integrated.
+- Provider/model are visible to the evaluator.
+
+### Knowledge base
+
+- Transcript data is ingested.
+- Chunks are indexed.
+- Embeddings are stored.
+- Retrieval returns source metadata.
+- Source URL is retained.
+
+### Ship30
+
+- Dedicated skill exists.
+- Output targets approximately 1,250 words.
+- Hook exists.
+- Narrative progression exists.
+- Output is skimmable.
+- Takeaway is specific.
+- Claims are grounded in retrieved evidence.
 
 ### Artifacts
 
-- Markdown generation
-- HTML/CSS generation
-- In-app artifact viewer
-- Preview/source views
-- Artifact persistence
-- Secure rendering
+- HTML/CSS can be generated.
+- Artifact is persisted.
+- Artifact is shown beside chat.
+- Generated HTML is sanitized.
+- Viewer uses sandboxing.
+- Unsafe tags/attributes are blocked.
 
 ### Operations
 
-- Docker Compose
-- Environment configuration
-- Structured logs
-- Health endpoints
-- Error handling
-- Automated tests
-- Operational documentation
+- `/health` exists.
+- `/api/system/status` exists.
+- Configuration is documented.
+- `.env.example` contains safe defaults.
+- Secrets are not committed.
+- Tests exist.
+- Troubleshooting is documented.
 
----
+## 8. Risks and mitigations
 
-# 8. Out of Scope
+| Risk | Impact | Mitigation |
+|---|---|---|
+| Hallucination | High | Retrieval-first prompts + evidence trail |
+| Incorrect citations | High | Server-returned source metadata is authoritative |
+| Local model quality | Medium | Small model for demo; provider abstraction |
+| Local latency | Medium | Generous timeout + visible status |
+| Cloud cost | Medium | Ollama default |
+| Unsafe HTML | High | Sanitizer + sandboxed iframe |
+| DB failure | High | Health endpoint + structured API errors |
+| Empty retrieval | High | Explicit insufficient-evidence behavior |
+| Stale corpus | Medium | Re-runnable ingestion pipeline |
+| Data leakage | High | No secrets in repository; generated HTML isolation |
 
-The following are intentionally excluded:
+## 9. Implementation plan
 
-- Enterprise SSO
-- Multi-tenant authorization
-- Billing
-- Public user registration
-- Autonomous web research
-- Arbitrary external website ingestion
-- Production-scale distributed inference
-- Fully autonomous product decision-making
+### Phase 1 — Foundation
 
-These exclusions keep the implementation focused on the evaluation objectives while leaving clear extension points.
-
----
-
-# 9. Differentiating Product Features
-
-In addition to the required functionality, the following features are planned where implementation time permits.
-
-## 9.1 Evidence Trail
-
-Every grounded answer exposes the sources used to produce it.
-
-Users can inspect:
-
-- Episode
-- Guest
-- Source
-- Relevant passage
-- Retrieval relevance
-
----
-
-## 9.2 Grounding Indicator
-
-Each response can communicate an interpretable grounding state:
-
-- High
-- Medium
-- Limited
-
-The indicator is based on retrieval evidence rather than model self-confidence.
-
----
-
-## 9.3 Challenge My Answer
-
-Users can ask the assistant to critically examine its response against the retrieved evidence.
-
-The system should identify:
-
-- Unsupported claims
-- Weak evidence
-- Alternative interpretations
-- Missing context
-
----
-
-## 9.4 Decision Canvas
-
-The assistant can transform knowledge into a structured decision artifact containing:
-
-- Problem
-- Evidence
-- Options
-- Trade-offs
-- Recommendation
-- Next experiment
-
----
-
-## 9.5 Knowledge Explorer
-
-Users can browse major product, growth, and leadership topics and launch grounded questions from those topics.
-
----
-
-## 9.6 System Health
-
-The application exposes operational status for:
-
-- API
+- FastAPI
+- configuration
 - PostgreSQL
+- Alembic
+- models
+- health endpoints
+
+### Phase 2 — Knowledge
+
+- transcript ingestion
+- chunking
+- embeddings
+- pgvector
+- FTS
+- hybrid retrieval
+
+### Phase 3 — Agent
+
+- provider abstraction
 - Ollama
-- Knowledge base
-- Retrieval
-- Artifact rendering
+- Claude provider
+- Agent SDK retrieval tool
+- growth agent
+- Ship30 skill
 
-This helps an evaluator diagnose issues without inspecting the codebase first.
+### Phase 4 — Product
 
----
+- sessions
+- message API
+- artifact API
+- React UI
+- Evidence Trail
+- Artifact Viewer
 
-# 10. User Flows
+### Phase 5 — Security and handoff
 
-## 10.1 New Conversation
+- sanitizer
+- iframe sandbox
+- tests
+- Docker
+- README/docs
+- demo
 
-```text
-Open application
-      ↓
-Create new session
-      ↓
-Ask question
-      ↓
-Retrieve evidence
-      ↓
-Generate grounded answer
-      ↓
-Display citations
+## 10. Product decisions
+
+### Why evidence trail?
+
+Because the main customer problem is not just generating an answer. It is knowing whether the answer is grounded enough to trust.
+
+### Why artifacts?
+
+The customer needs work product, not just conversation. A decision canvas can be taken directly into a planning meeting.
+
+### Why separate Ship30?
+
+Writing has a different quality contract from Q&A. A dedicated skill makes those constraints explicit and testable.
